@@ -1,0 +1,10 @@
+{{template "base" . }}
+{{ define "content" }}
+<h1>Articles</h1>
+<hr/>
+<ul class="list-group">
+  {{ range . }}
+    <li> <a href='/{{ .Name }}' class="list-group-item list-group-item-action">{{ .Name }}</a></li>
+  {{ end }}
+</ul>
+{{end}}
