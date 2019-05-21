@@ -43,7 +43,8 @@ func init() {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		docs[file.Name()] = template.HTML(markdown.ToHTML(md, nil, nil))
+		n := file.Name()[:len(file.Name())-3]
+		docs[n] = template.HTML(markdown.ToHTML(md, nil, nil))
 	}
 }
 
@@ -51,6 +52,8 @@ func main() {
 	ip_port := ":8080"
 	http.HandleFunc("/",handler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+	log.Println("Serving from " + ip_port)
 	http.ListenAndServe(ip_port, nil)
 }
 
@@ -65,11 +68,7 @@ func handler(conn http.ResponseWriter,req *http.Request) {
 			log.Fatalln(err)
 		}
 	} else {
-		files, err := ioutil.ReadDir("articles/")
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = tpl.index.ExecuteTemplate(&buf, "base", files)
+		err := tpl.index.ExecuteTemplate(&buf, "base", docs)
 		if err != nil {
 			log.Fatalln(err)
 		}
